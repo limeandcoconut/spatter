@@ -1,0 +1,38 @@
+{
+  "name": "spatter",
+  "version": "0.1.0",
+  "description": "A package for creating a paint drop on papter effect using canvas and svgs.",
+  "main": "dist/index.js",
+  "scripts": {
+    "//test": " ./node_modules/.bin/mocha --compilers js:babel-core/register --reporter=nyan",
+    "build": "babel source --out-dir dist",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/limeandcoconut/spatter"
+  },
+  "keywords": [
+    "spatter",
+    "canvas",
+    "paint",
+    "svg",
+    "art"
+  ],
+  "author": {
+    "name": "Jacob Smith",
+    "email": "messagethesmith@gmail.com",
+    "url": "https://github.com/limeandcoconut"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "raf": "^3.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-preset-es2015": "^6.18.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
