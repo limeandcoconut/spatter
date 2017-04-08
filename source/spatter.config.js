@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     droplets: {
         size: 70,
         count: 40,
@@ -32,4 +32,4 @@ export default {
         onStart: null,
         onComplete: null,
     },
-}
+};

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     data: 'data:image/svg+xml;charset=UTF-8,',
     svgOpen: '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="600">',
     filterOpen: '<defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="',
@@ -8,4 +8,4 @@ export default {
     groupOpenMid: '), translate(',
     groupOpenPost: ')">',
     groupClose: '</g></g>',
-}
+};
