@@ -2,12 +2,7 @@ const BezierEasing = require('bezier-easing');
 const raf = require('raf');
 const Droplet = require('./droplet.js');
 const Pour = require('./pour.js');
-const defaultConfig = require('./spatter.config.js');
-
-// TODO:
-// Run off of powertrain
-// use dt to get timing right
-// Throw if Droplet has not been configured or passed opts
+const externalConfig = require('./spatter.config.js');
 
 /**
  * [Spatter description]
@@ -34,7 +29,7 @@ function Spatter(canvas, opts) {
     this.dropletAnimation = this.dropletAnimation.bind(this);
 
     let config = {};
-    Object.assign(config, defaultConfig);
+    Object.assign(config, externalConfig);
 
     let dropletsConfig = config.droplets;
 
@@ -180,6 +175,7 @@ Spatter.prototype.dropletAnimation = function() {
 
     if (!this.dropletAnimationComplete) {
         raf(this.dropletAnimation);
+        // setTimeout(this.dropletAnimation, 100);
     }
 };
 

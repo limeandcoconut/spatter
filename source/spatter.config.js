@@ -12,8 +12,6 @@ module.exports = {
     },
     easingControls: {
         outro: {
-            // a: {x: 0.22, y: 0.55},
-            // b: {x: 0.73, y: 0.73},
             a: {x: 0.42, y: 0.87},
             b: {x: 0.62, y: 0.51},
         },
