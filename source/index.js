@@ -8,7 +8,6 @@ const defaultConfig = require('./spatter.config.js');
 // Run off of powertrain
 // use dt to get timing right
 // Throw if Droplet has not been configured or passed opts
-// Swith to require
 
 /**
  * [Spatter description]
@@ -44,12 +43,12 @@ function Spatter(canvas, opts) {
         ...config.timing,
         easingControls: config.easingControls,
         dropletCount: dropletsConfig.count,
-        dropletSpeckCount: dropletsConfig.speckCount,
     }, opts);
 
     this.outroFrameCount = 0;
     this.dropletFrameCount = 0;
     this.droplets = [];
+    this.img = new Image();
 
     // Used to delay begin() until bg is loaded
     this.isReady = false;
@@ -58,8 +57,8 @@ function Spatter(canvas, opts) {
     this.outroLength /= 16;
 
     // Used for timing
-    this.dropletDuration =
-    (this.dropletCount * this.dropletTiming) - (dropletsConfig.maxBlur - dropletsConfig.initalBlur);
+    // this.dropletDuration = (this.dropletCount * this.dropletTiming) - dropletsConfig.scaleTiming;
+    this.dropletDuration = this.dropletCount * this.dropletTiming;
 
     // Create easing functions
     let a = this.easingControls.timing.a;
@@ -71,8 +70,10 @@ function Spatter(canvas, opts) {
     b = dropletsConfig.easingControls.b;
     Droplet.configure({
         size: dropletsConfig.size,
-        blurAmount: dropletsConfig.initalBlur,
-        maxBlur: dropletsConfig.maxBlur,
+        // blurAmount: dropletsConfig.initalBlur,
+        printSize: dropletsConfig.printSize,
+        scaleTiming: dropletsConfig.scaleTiming,
+        speckCount: dropletsConfig.speckCount,
         canvasWidth: this.canvas.width,
         canvasHeight: this.canvas.height,
         easingFunction: new BezierEasing(a.x, a.y, b.x, b.y),
@@ -112,26 +113,11 @@ Spatter.prototype.begin = function() {
     }
 
     let droplets = this.droplets;
-    let droplet;
-
     // Prepare all of the droplet objects for rendering
     let i = this.dropletCount - 1;
     while (i >= 0) {
         i--;
-
-        // This is the center of the grouping
-        droplet = new Droplet();
-
-        // Add specks for this droplet
-        let j = this.dropletSpeckCount - 1;
-        while (j >= 0) {
-            j--;
-            droplet.addSpeck();
-        }
-
-        // Complete the closing tag
-        droplet.completeTag();
-        droplets.push(droplet);
+        droplets.push(new Droplet());
     }
 
     this.dropletAnimationComplete = false;
@@ -157,6 +143,8 @@ Spatter.prototype.startOutro = function() {
     let a = this.easingControls.outro.a;
     let b = this.easingControls.outro.b;
     Pour.configure({
+        canvasWidth: this.canvas.width,
+        canvasHeight: this.canvas.height,
         easingFunction: new BezierEasing(a.x, a.y, b.x, b.y),
     });
     this.pour = new Pour();
@@ -166,6 +154,7 @@ Spatter.prototype.startOutro = function() {
 Spatter.prototype.dropletAnimation = function() {
 
     let timing = this.easeTiming(this.dropletFrameCount / this.dropletDuration) * this.dropletDuration;
+    let img = this.img;
     this.dropletFrameCount++;
     // For each droplet
     this.droplets.forEach((droplet, index) => {
@@ -173,12 +162,19 @@ Spatter.prototype.dropletAnimation = function() {
         if (!droplet.begun && timing / this.dropletTiming >= index) {
             droplet.activate();
         } else if (droplet.begun && !droplet.complete) {
-        // If it is not done animating blur it more
-            // Promise.all() will be triggered here when all droplets are blured to the maximum amount
+        // If it is not done animating scale it more
+            // Promise.all() will be triggered here when all droplets are scaled to the maximum amount
             // That will begin the outro (maybe) and stop requesting frames for this function
-            droplet.blur();
-            let img = droplet.getFrame();
-            this.canvasCtx.drawImage(img, droplet.x, droplet.y, 300, 300);
+            droplet.scaleUp();
+            img.src = droplet.getFrame();
+
+            this.canvasCtx.drawImage(
+                img,
+                droplet.x,
+                droplet.y,
+                droplet.printSize,
+                droplet.printSize
+            );
         }
     });
 
@@ -191,12 +187,20 @@ Spatter.prototype.outro = function() {
     this.pour.expand(this.outroFrameCount / this.outroLength);
     this.outroFrameCount++;
 
-    this.canvasCtx.drawImage(this.pour.getFrame(), 0, 0, this.canvas.width, this.canvas.width);
+    this.img.src = this.pour.getFrame();
+
+    this.canvasCtx.drawImage(
+        this.img,
+        this.pour.x,
+        this.pour.y,
+        this.pour.printSize,
+        this.pour.printSize
+    );
 
     if (this.outroFrameCount < this.outroLength) {
         raf(this.outro);
-    } else if (this.isComplete) {
-        this.isComplete();
+    } else if (this.onComplete) {
+        this.onComplete();
     }
 };
 

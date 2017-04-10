@@ -1,11 +1,10 @@
 module.exports = {
     droplets: {
         size: 70,
-        count: 40,
+        printSize: 300,
+        count: 50,
         speckCount: 10,
-        initalBlur: 4,
-        maxBlur: 6,
-        blurStep: 0.2,
+        scaleTiming: 8,
         easingControls: {
             a: {x: 0.13, y: 1.00},
             b: {x: 0.73, y: 1.00},
@@ -13,6 +12,8 @@ module.exports = {
     },
     easingControls: {
         outro: {
+            // a: {x: 0.22, y: 0.55},
+            // b: {x: 0.73, y: 0.73},
             a: {x: 0.42, y: 0.87},
             b: {x: 0.62, y: 0.51},
         },
